@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import Form from "./components/Form";
 import TodoList from "./components/TodoList";
 import { useTodoStore } from "./store";
+import LoadingOverlay from "./components/Modal";
 
 const App = () => {
   const getTodos = useTodoStore((state) => state.getTodos);
@@ -14,6 +15,7 @@ const App = () => {
     <>
       <Form />
       <TodoList />
+      <LoadingOverlay />
     </>
   );
 };
