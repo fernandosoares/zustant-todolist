@@ -1,8 +1,8 @@
 import { useTodoStore } from "../../store";
 
 export const useTodoItemHooks = () => {
-  const completeTodo = useTodoStore((state) => state.completeTodo);
-  const removeTodo = useTodoStore((state) => state.removeTodo);
+  const { completeTodo, removeTodo } = useTodoStore((state) => state);
+
   const handleComplete = (id: string, status: boolean) => {
     completeTodo(id, status);
   };

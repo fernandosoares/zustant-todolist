@@ -20,13 +20,13 @@ const TodoList = () => {
           <TableHead>
             <TableRow>
               <TableCell width="65%">Title</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell>Done?</TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {todos.map((todo) => (
-              <TodoItem {...todo} />
+              <TodoItem key={todo.id} {...todo} />
             ))}
           </TableBody>
         </Table>
