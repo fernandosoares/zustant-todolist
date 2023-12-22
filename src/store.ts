@@ -64,7 +64,6 @@ export const useTodoStore = create<TodoStore>((set) => ({
 
   completeTodo: (id, status) => {
     set({ loading: true });
-    console.log(id, status);
 
     fetch(`${import.meta.env.VITE_API_URL}/${id}`, {
       method: "PATCH",
@@ -83,11 +82,16 @@ export const useTodoStore = create<TodoStore>((set) => ({
   },
 
   removeTodo: (id) => {
+    set({ loading: true });
     fetch(`${import.meta.env.VITE_API_URL}/${id}`, {
       method: "DELETE",
-    }).then(async (response) => {
-      await response.json();
-      useTodoStore.getState().getTodos();
-    });
+    })
+      .then(async (response) => {
+        await response.json();
+        useTodoStore.getState().getTodos();
+      })
+      .finally(() => {
+        set({ loading: false });
+      });
   },
 }));
