@@ -17,76 +17,77 @@ type TodoStore = {
   removeTodo: (id: string) => void;
 };
 
-export const useTodoStore = create<TodoStore>((set) => {
-  return {
-    loading: false,
-    todos: [],
-    getTodos: () => {
-      set({ loading: true });
-      fetch(import.meta.env.VITE_API_URL, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+export const useTodoStore = create<TodoStore>((set) => ({
+  loading: false,
+  todos: [],
+  getTodos: () => {
+    set({ loading: true });
+    fetch(import.meta.env.VITE_API_URL, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then(async (response) => {
+        const todos = await response.json();
+        set({ todos: todos });
       })
-        .then(async (response) => {
-          const todos = await response.json();
-          set({ todos: todos });
-        })
-        .catch((err) => {
-          console.log("Erro: ", err);
-        })
-        .finally(() => {
-          set({ loading: false });
-        });
-    },
-
-    addTodo: (todo) => {
-      set({ loading: true });
-      fetch(import.meta.env.VITE_API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(todo),
+      .catch((err) => {
+        console.log("Erro: ", err);
       })
-        .then(async (response) => {
-          if (response.ok) {
-            const data = await response.json();
-            set((state) => ({ todos: [...state.todos, data] }));
-          } else {
-            console.error(response.statusText);
-          }
-        })
-        .catch((err) => console.log(err))
-        .finally(() => {
-          set({ loading: false });
-        });
-    },
+      .finally(() => {
+        set({ loading: false });
+      });
+  },
 
-    completeTodo: (id, status) => {
-      set({ loading: true });
-      const body = JSON.stringify({ done: status }, null, 2);
-      console.log(body);
-      fetch(`${import.meta.env.VITE_API_URL}/${id}`, {
-        method: "PATCH",
-        body: body,
+  addTodo: (todo) => {
+    set({ loading: true });
+    fetch(import.meta.env.VITE_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(todo),
+    })
+      .then(async (response) => {
+        if (response.ok) {
+          const data = await response.json();
+          set((state) => ({ todos: [...state.todos, data] }));
+        } else {
+          console.error(response.statusText);
+        }
       })
-        .then(async (response) => {
-          await response.json();
-          useTodoStore.getState().getTodos();
-        })
-        .finally(() => {
-          set({ loading: false });
-        });
-    },
+      .catch((err) => console.log(err))
+      .finally(() => {
+        set({ loading: false });
+      });
+  },
 
-    removeTodo: (id) => {
-      fetch(`${import.meta.env.VITE_API_URL}/${id}`, {
-        method: "DELETE",
-      }).then(async (response) => {
+  completeTodo: (id, status) => {
+    set({ loading: true });
+    console.log(id, status);
+
+    fetch(`${import.meta.env.VITE_API_URL}/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ done: status }),
+    })
+      .then(async (response) => {
         await response.json();
         useTodoStore.getState().getTodos();
+      })
+      .finally(() => {
+        set({ loading: false });
       });
-    },
-  };
-});
+  },
+
+  removeTodo: (id) => {
+    fetch(`${import.meta.env.VITE_API_URL}/${id}`, {
+      method: "DELETE",
+    }).then(async (response) => {
+      await response.json();
+      useTodoStore.getState().getTodos();
+    });
+  },
+}));
