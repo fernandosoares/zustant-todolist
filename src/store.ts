@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { api } from "./services/api";
 import { TodoStore } from "./types";
 
-export const useTodoStore = create<TodoStore>((set) => ({
+export const useTodoStore = create<TodoStore>()((set) => ({
   loading: false,
   todos: [],
   getTodos: () => {
